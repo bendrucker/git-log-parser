@@ -20,7 +20,12 @@ function format (fieldMap) {
 
 function trim () {
   return through(function (chunk, enc, callback) {
-    callback(null, chunk || void 0);
+    if (!chunk) {
+      callback();
+    }
+    else {
+      callback(null, chunk);
+    }
   });
 }
 
