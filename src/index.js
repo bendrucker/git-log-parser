@@ -59,3 +59,5 @@ exports.parse = function parseLogStream (config) {
     })
   ]);
 };
+
+exports.fields = fields.config;
