@@ -1,4 +1,4 @@
-git-log-parser
+git-log-parser [![Build Status](https://travis-ci.org/bendrucker/git-log-parser.svg?branch=master)](https://travis-ci.org/bendrucker/git-log-parser)
 ==============
 
 Run `git log` and return a stream of commit objects.
