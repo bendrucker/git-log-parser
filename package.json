@@ -8,16 +8,19 @@
     "through2": "~0.6.3",
     "traverse": "~0.6.6"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "~1.10.0",
+    "mocha": "~2.0.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/bendrucker/git-log-parser.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/bendrucker/git-log-parser/issues"
   },
