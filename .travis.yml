@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+- '0.10'
+deploy:
+  provider: npm
+  email: bvdrucker@gmail.com
+  api_key:
+    secure: m2P7IW7PtmbIB+tinhyh2cSveR/k2OPvl7G5xjBg9L7WLmqpKnkQoXu3eUKVqtRlvAhqxf2pxBN8V0Bxn8/iBqSWVWyEkFAs2KkAAL6YtM7X1OGmHXe0xdUHrKiQpZ2iae4bYZa3OWqjDLfIALaLMaxxQHJEI8dI48acmWsWKA8=
+  on:
+    tags: true
+    all_branches: true
+    repo: bendrucker/git-log-parser
