@@ -14,7 +14,7 @@ describe('git-log-parser', function () {
       commits.push(data);
     })
     .on('error', done)
-    .on('finish', done);
+    .on('end', done);
   });
 
   it('creates a stream of commit objects', function () {
@@ -24,6 +24,18 @@ describe('git-log-parser', function () {
   it('types dates', function () {
     expect(commits[0].author.date).to.be.an.instanceOf(Date);
     expect(commits[0].committer.date).to.be.an.instanceOf(Date);
+  });
+
+  it('emits errors', function (done) {
+    logParser.parse({
+      _: 'causefailure'
+    })
+    .on('error', function (err) {
+      expect(err.message)
+        .to.match(/^git log failed:/)
+        .and.contain('causefailure');
+      done();
+    });
   });
 
 });

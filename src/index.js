@@ -6,6 +6,7 @@ var split    = require('split');
 var traverse = require('traverse');
 var fields   = require('./fields');
 var toArgv   = require('argv-formatter').format;
+var combine  = require('stream-combiner');
 
 var END = '==END==';
 var FIELD = '==FIELD==';
@@ -30,9 +31,16 @@ function trim () {
 
 function log (args) {
   var child = spawn('git', ['log'].concat(args));
-  return child.stdout
-    .pipe(split(END + '\n'))
-    .pipe(trim());
+  var stderr = [];
+  child.stderr.on('data', function (chunk) {
+    stderr.push(chunk);
+  });
+  child.on('close', function (code) {
+    if (code !== 0) {
+      child.stdout.emit('error', new Error('git log failed:\n\n' + stderr.toString()));
+    }
+  });
+  return child.stdout;
 }
 
 function args (config, fieldMap) {
@@ -43,13 +51,17 @@ function args (config, fieldMap) {
 exports.parse = function parseLogStream (config) {
   config  = config || {};
   var map = fields.map();
-  return log(args(config, map))
-    .pipe(through.obj(function (chunk, enc, callback) {
+  return combine([
+    log(args(config, map)),
+    split(END + '\n'),
+    trim(),
+    through.obj(function (chunk, enc, callback) {
       var fields = chunk.toString('utf8').split(FIELD);
       callback(null, map.reduce(function (parsed, field, index) {
         var value = fields[index];
         traverse(parsed).set(field.path, field.type ? new field.type(value) : value);
         return parsed;
       }, {}));
-    }));
+    })
+  ]);
 };
