@@ -7,6 +7,7 @@ var traverse = require('traverse');
 var fields   = require('./fields');
 var toArgv   = require('argv-formatter').format;
 var combine  = require('stream-combiner');
+var fwd      = require('spawn-error-forwarder');
 
 var END = '==END==';
 var FIELD = '==FIELD==';
@@ -30,17 +31,10 @@ function trim () {
 }
 
 function log (args) {
-  var child = spawn('git', ['log'].concat(args));
-  var stderr = [];
-  child.stderr.on('data', function (chunk) {
-    stderr.push(chunk);
-  });
-  child.on('close', function (code) {
-    if (code !== 0) {
-      child.stdout.emit('error', new Error('git log failed:\n\n' + stderr.toString()));
-    }
-  });
-  return child.stdout;
+  return fwd(spawn('git', ['log'].concat(args)), function (code, stderr) {
+    return new Error('git log failed:\n\n' + stderr);
+  })
+  .stdout;
 }
 
 function args (config, fieldMap) {

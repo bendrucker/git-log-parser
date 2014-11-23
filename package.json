@@ -5,6 +5,7 @@
   "main": "./src",
   "dependencies": {
     "argv-formatter": "~1.0.0",
+    "spawn-error-forwarder": "~1.0.0",
     "split": "~0.3.1",
     "stream-combiner": "~0.2.1",
     "through2": "~0.6.3",
