@@ -36,10 +36,10 @@ function log (args) {
     .pipe(trim());
 }
 
-exports.parse = function parseLogStream () {
+exports.parse = function parseLogStream (args) {
   var map = fields.map();
   var formatting = format(map);
-  return log([formatting])
+  return log([formatting].concat(args || []))
     .pipe(through.obj(function (chunk, enc, callback) {
       var fields = chunk.toString('utf8').split(FIELD);
       callback(null, map.reduce(function (parsed, field, index) {
