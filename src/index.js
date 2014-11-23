@@ -5,17 +5,16 @@ var through  = require('through2');
 var split    = require('split');
 var traverse = require('traverse');
 var fields   = require('./fields');
+var toArgv   = require('argv-formatter').format;
 
 var END = '==END==';
 var FIELD = '==FIELD==';
 
 function format (fieldMap) {
-  return '--format=' + 
-    fieldMap.map(function (field) {
+  return fieldMap.map(function (field) {
       return '%' + field.key;
     })
-    .join(FIELD) +
-    END;
+    .join(FIELD) + END;
 }
 
 function trim () {
@@ -36,10 +35,15 @@ function log (args) {
     .pipe(trim());
 }
 
-exports.parse = function parseLogStream (args) {
+function args (config, fieldMap) {
+  config.format = format(fieldMap);
+  return toArgv(config);
+}
+
+exports.parse = function parseLogStream (config) {
+  config  = config || {};
   var map = fields.map();
-  var formatting = format(map);
-  return log([formatting].concat(args || []))
+  return log(args(config, map))
     .pipe(through.obj(function (chunk, enc, callback) {
       var fields = chunk.toString('utf8').split(FIELD);
       callback(null, map.reduce(function (parsed, field, index) {

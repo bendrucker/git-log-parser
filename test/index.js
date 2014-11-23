@@ -7,12 +7,14 @@ describe('git-log-parser', function () {
 
   var commits = [];
   before(function (done) {
-    logParser.parse(['--', './test/versioned/*'])
-      .on('data', function (data) {
-        commits.push(data);
-      })
-      .on('error', done)
-      .on('finish', done);
+    logParser.parse({
+      _: ['--',  './test/versioned/*']
+    })
+    .on('data', function (data) {
+      commits.push(data);
+    })
+    .on('error', done)
+    .on('finish', done);
   });
 
   it('creates a stream of commit objects', function () {
