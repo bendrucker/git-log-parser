@@ -18,21 +18,29 @@ function format (fieldMap) {
     END;
 }
 
-function log (args) {
-  var fieldMap = fields.map();
-  var child = spawn('git', ['log', format(fieldMap)]);
-  return child.stdout
-    .pipe(split(END + '\n'))
-    .pipe(through.obj(function (chunk, enc, callback) {
-      if (!chunk) return callback();
-      var data = chunk.toString('utf8').split(FIELD);
-      var parsed = fieldMap.reduce(function (parsed, field, index) {
-        var value = data[index];
-        traverse(parsed).set(field.path, field.type ? new field.type(value) : value);
-        return parsed;
-      }, {});
-      this.push(parsed);
-      callback();
-    }));
+function trim () {
+  return through(function (chunk, enc, callback) {
+    callback(null, chunk || void 0);
+  });
 }
 
+function log (args) {
+  var child = spawn('git', ['log'].concat(args));
+  return child.stdout
+    .pipe(split(END + '\n'))
+    .pipe(trim());
+}
+
+exports.parse = function parseLogStream () {
+  var map = fields.map();
+  var formatting = format(map);
+  return log([formatting])
+    .pipe(through.obj(function (chunk, enc, callback) {
+      var fields = chunk.toString('utf8').split(FIELD);
+      callback(null, map.reduce(function (parsed, field, index) {
+        var value = fields[index];
+        traverse(parsed).set(field.path, field.type ? new field.type(value) : value);
+        return parsed;
+      }, {}));
+    }));
+};
