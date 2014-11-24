@@ -53,7 +53,7 @@ Commit objects contain the most frequently used commit information. However, the
 Get all commits from earlier than an hour ago and stream them to `stdout` as pretty-printed JSON
 
 ```js
-var log      = require('./');
+var log      = require('git-log-parser');
 var through2 = require('through2');
 log.parse({
   before: new Date(new Date(Date.now() - 60 * 60 * 1000))
