@@ -55,13 +55,14 @@ Get all commits from earlier than an hour ago and stream them to `stdout` as pre
 ```js
 var log      = require('git-log-parser');
 var through2 = require('through2');
+
 log.parse({
-  before: new Date(new Date(Date.now() - 60 * 60 * 1000))
+  before: new Date(Date.now() - 60 * 60 * 1000)
 })
 .pipe(through2.obj(function (chunk, enc, callback) {
-  callback(null, JSON.stringify(chunk, void 0, 2));
+  callback(null, JSON.stringify(chunk, undefined, 2));
 }))
 .pipe(process.stdout);
 ```
 
-Note that `before` is stringified and passed directly as an argument to `git log`. No special handling is required for any standard `git log` option. You can filter by committer, time, or any other field supported by [git log](http://git-scm.com/docs/git-log).
+Note that `before` is stringified and passed directly as an argument to `git log`. No special handling is required for any standard `git log` option. You can filter by committer, time, or any other field supported by [`git log`](http://git-scm.com/docs/git-log).
