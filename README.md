@@ -44,6 +44,8 @@ A commit is structured as follows:
 
 `author.date` and `commiter.date` are `Date` objects while all other values are strings.
 
+If you just want an array of commits, use [stream-to-array](https://www.npmjs.com/package/stream-to-array) to wrap the returned stream.
+
 #### `log.fields` -> `Object`
 
 Commit objects contain the most frequently used commit information. However, the [field mappings](https://github.com/bendrucker/git-log-parser/blob/master/src/fields.js) used to format and then parse log output can be amended before calling the parser. Consult the [full range of formatting placeholders](http://opensource.apple.com/source/Git/Git-19/src/git-htmldocs/pretty-formats.txt) and add the placeholder to the object tree if you wish to add extra fields.
