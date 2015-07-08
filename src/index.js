@@ -30,8 +30,8 @@ function trim () {
   });
 }
 
-function log (args) {
-  return fwd(spawn('git', ['log'].concat(args)), function (code, stderr) {
+function log (args, options) {
+  return fwd(spawn('git', ['log'].concat(args), options), function (code, stderr) {
     return new Error('git log failed:\n\n' + stderr);
   })
   .stdout;
@@ -42,11 +42,11 @@ function args (config, fieldMap) {
   return toArgv(config);
 }
 
-exports.parse = function parseLogStream (config) {
+exports.parse = function parseLogStream (config, options) {
   config  = config || {};
   var map = fields.map();
   return combine([
-    log(args(config, map)),
+    log(args(config, map), options),
     split(END + '\n'),
     trim(),
     through.obj(function (chunk, enc, callback) {

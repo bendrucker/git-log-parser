@@ -11,9 +11,11 @@ $ npm install git-log-parser
 
 ## API
 
-#### `log.parse(config)` -> `Stream(commits)`
+#### `log.parse(config, options)` -> `Stream(commits)`
 
 Accepts a `config` object mapping to the [options accepted by `git log`](http://git-scm.com/docs/git-log). `config` will be automatically converted to command line options and flags by [argv-formatter](https://github.com/bendrucker/argv-formatter). Returns a stream of commit objects. 
+
+`options` is passed directly to [`child_process.spawn`](https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options).
 
 A commit is structured as follows:
 
