@@ -2,11 +2,11 @@
 
 var spawn    = require('child_process').spawn;
 var through  = require('through2');
-var split    = require('split');
+var split    = require('split2');
 var traverse = require('traverse');
 var fields   = require('./fields');
 var toArgv   = require('argv-formatter').format;
-var combine  = require('stream-combiner');
+var combine  = require('stream-combiner2');
 var fwd      = require('spawn-error-forwarder');
 
 var END = '==END==';
@@ -45,7 +45,7 @@ function args (config, fieldMap) {
 exports.parse = function parseLogStream (config, options) {
   config  = config || {};
   var map = fields.map();
-  return combine([
+  return combine.obj([
     log(args(config, map), options),
     split(END + '\n'),
     trim(),
