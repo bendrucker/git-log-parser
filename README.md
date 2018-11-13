@@ -1,4 +1,4 @@
-git-log-parser [![Build Status](https://travis-ci.org/bendrucker/git-log-parser.svg?branch=master)](https://travis-ci.org/bendrucker/git-log-parser)
+git-log-parser [![Build Status](https://travis-ci.org/bendrucker/git-log-parser.svg?branch=master)](https://travis-ci.org/bendrucker/git-log-parser) [![Greenkeeper badge](https://badges.greenkeeper.io/bendrucker/git-log-parser.svg)](https://greenkeeper.io/)
 ==============
 
 Run `git log` and return a stream of commit objects.
