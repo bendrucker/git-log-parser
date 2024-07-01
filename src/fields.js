@@ -1,7 +1,5 @@
 'use strict';
 
-var traverse = require('traverse');
-
 exports.config = {
   commit: {
     long: 'H',
@@ -32,15 +30,27 @@ exports.config = {
 };
 
 exports.map = function () {
-  return traverse.reduce(exports.config, function (fields, node) {
-    if (this.isLeaf && typeof node === 'string') {
-      var typed = this.key === 'key';
+  var fields = [];
+
+  function crawl(node, path, parent) {
+    if (typeof node === 'object') {
+      for (var childKey in node) {
+        if (!Object.prototype.hasOwnProperty.call(node, childKey)) continue;
+        path.push(childKey);
+        crawl(node[childKey], path, node);
+        path.pop(childKey);
+      }
+    } else if (typeof node === 'string') {
+      var typed = path[path.length - 1] === 'key';
       fields.push({
-        path: typed ? this.parent.path : this.path,
+        path: typed ? path.slice(0, path.length - 1) : path.slice(0),
         key: node,
-        type: this.parent.node.type
+        type: parent.type
       });
     }
-    return fields;
-  }, []);
+  }
+
+  crawl(exports.config, [], undefined);
+
+  return fields;
 };
