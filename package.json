@@ -9,7 +9,7 @@
     "split2": "~1.0.0",
     "stream-combiner2": "~1.1.1",
     "through2": "~2.0.0",
-    "traverse": "~0.6.6"
+    "traverse": "0.6.8"
   },
   "devDependencies": {
     "chai": "~1.10.0",
