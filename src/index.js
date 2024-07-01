@@ -3,6 +3,7 @@
 var spawn    = require('child_process').spawn;
 var through  = require('through2');
 var split    = require('split2');
+var traverse = require('traverse');
 var fields   = require('./fields');
 var toArgv   = require('argv-formatter').format;
 var combine  = require('stream-combiner2');
@@ -41,19 +42,6 @@ function args (config, fieldMap) {
   return toArgv(config);
 }
 
-function setByPath(obj, path, value) {
-  var dest = obj;
-  for (var i = 0; i < path.length - 1; i++) {
-    var key = path[i];
-    if (!Object.prototype.hasOwnProperty.call(obj, key)) {
-      obj[key] = {};
-    }
-    dest = dest[key];
-  }
-
-  dest[path[path.length - 1]] = value;
-}
-
 exports.parse = function parseLogStream (config, options) {
   config  = config || {};
   var map = fields.map();
@@ -65,7 +53,7 @@ exports.parse = function parseLogStream (config, options) {
       var fields = chunk.toString('utf8').split(FIELD);
       callback(null, map.reduce(function (parsed, field, index) {
         var value = fields[index];
-        setByPath(parsed, field.path, field.type ? new field.type(value) : value);
+        traverse(parsed).set(field.path, field.type ? new field.type(value) : value);
         return parsed;
       }, {}));
     })
