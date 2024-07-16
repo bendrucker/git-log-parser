@@ -1,6 +1,6 @@
 'use strict';
 
-var traverse = require('traverse');
+var traverse = require('neotraverse/legacy');
 
 exports.config = {
   commit: {
