@@ -1,63 +1,61 @@
-'use strict';
+import { spawn } from 'node:child_process';
+import through from 'through2';
+import split from 'split2';
+import traverse from 'traverse';
+import combine from 'stream-combiner2';
+import fwd from 'spawn-error-forwarder';
+import argvFormatter from 'argv-formatter';
+import * as fields from './fields.js';
 
-var spawn    = require('child_process').spawn;
-var through  = require('through2');
-var split    = require('split2');
-var traverse = require('traverse');
-var fields   = require('./fields');
-var toArgv   = require('argv-formatter').format;
-var combine  = require('stream-combiner2');
-var fwd      = require('spawn-error-forwarder');
+const toArgv = argvFormatter.format;
 
-var END = '==END==';
-var FIELD = '==FIELD==';
+const END = '==END==';
+const FIELD = '==FIELD==';
 
-function format (fieldMap) {
-  return fieldMap.map(function (field) {
-      return '%' + field.key;
-    })
+function format(fieldMap) {
+  return fieldMap.map((field) => '%' + field.key)
     .join(FIELD) + END;
 }
 
-function trim () {
-  return through(function (chunk, enc, callback) {
+function trim() {
+  return through((chunk, enc, callback) => {
     if (!chunk) {
       callback();
-    }
-    else {
+    } else {
       callback(null, chunk);
     }
   });
 }
 
-function log (args, options) {
-  return fwd(spawn('git', ['log'].concat(args), options), function (code, stderr) {
+function log(args, options) {
+  return fwd(spawn('git', ['log'].concat(args), options), (code, stderr) => {
     return new Error('git log failed:\n\n' + stderr);
   })
   .stdout;
 }
 
-function args (config, fieldMap) {
+function args(config, fieldMap) {
   config.format = format(fieldMap);
   return toArgv(config);
 }
 
-exports.parse = function parseLogStream (config, options) {
-  config  = config || {};
-  var map = fields.map();
+export function parse(config, options) {
+  config = config || {};
+  const map = fields.map();
   return combine.obj([
     log(args(config, map), options),
     split(END + '\n'),
     trim(),
-    through.obj(function (chunk, enc, callback) {
-      var fields = chunk.toString('utf8').split(FIELD);
-      callback(null, map.reduce(function (parsed, field, index) {
-        var value = fields[index];
+    through.obj((chunk, enc, callback) => {
+      const fieldValues = chunk.toString('utf8').split(FIELD);
+      callback(null, map.reduce((parsed, field, index) => {
+        const value = fieldValues[index];
         traverse(parsed).set(field.path, field.type ? new field.type(value) : value);
         return parsed;
       }, {}));
     })
   ]);
-};
+}
 
-exports.fields = fields.config;
+const fieldsConfig = fields.config;
+export { fieldsConfig as fields }
