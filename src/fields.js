@@ -1,8 +1,6 @@
-'use strict';
+import traverse from 'traverse';
 
-var traverse = require('traverse');
-
-exports.config = {
+export const config = {
   commit: {
     long: 'H',
     short: 'h'
@@ -31,10 +29,10 @@ exports.config = {
   body: 'b'
 };
 
-exports.map = function () {
-  return traverse.reduce(exports.config, function (fields, node) {
+export function map() {
+  return traverse.reduce(config, function (fields, node) {
     if (this.isLeaf && typeof node === 'string') {
-      var typed = this.key === 'key';
+      const typed = this.key === 'key';
       fields.push({
         path: typed ? this.parent.path : this.path,
         key: node,
@@ -43,4 +41,4 @@ exports.map = function () {
     }
     return fields;
   }, []);
-};
+}

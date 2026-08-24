@@ -2,7 +2,11 @@
   "name": "git-log-parser",
   "version": "1.2.1",
   "description": "git-log-parser",
-  "main": "./src",
+  "type": "module",
+  "exports": "./src/index.js",
+  "files": [
+    "src"
+  ],
   "dependencies": {
     "argv-formatter": "~1.0.0",
     "spawn-error-forwarder": "~1.0.0",
@@ -11,12 +15,8 @@
     "through2": "~2.0.0",
     "traverse": "0.6.8"
   },
-  "devDependencies": {
-    "chai": "~1.10.0",
-    "mocha": "~2.0.1"
-  },
   "scripts": {
-    "test": "mocha"
+    "test": "node --test"
   },
   "repository": {
     "type": "git",
